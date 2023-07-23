@@ -8,7 +8,7 @@ class Board:
         self.board = [[None for _ in range(COLS)]for _ in range(ROWS)]
 
     # GUI ---------------------------------------------------------------------
-    def drawBoard(self, win) -> None:
+    def __drawBoard(self, win) -> None:
         """
         Draws checkers board.
         """
@@ -16,16 +16,22 @@ class Board:
         for row in range(ROWS):
             for col in range(row % 2, ROWS, 2):
                 pygame.draw.rect(win, RED, (row * SQUARE_SIZE, col * SQUARE_SIZE, SQUARE_SIZE, SQUARE_SIZE))
-
-    def drawPieces(self, win) -> None:
+    
+    def __drawPieces(self, win) -> None:
         """
         Draws pieces on the board.
         """
         for row in range(ROWS):
             for col in range(COLS):
-                if self.board[row][col] != None:
-                    color = self.board[row][col].getColor()
-                    pygame.draw.circle(win, color, (row * SQUARE_SIZE + SQUARE_SIZE // 2, col * SQUARE_SIZE + SQUARE_SIZE // 2), PIECES_RADIUS)
+                if type(self.board[row][col]) == Piece:
+                    self.board[row][col].drawPiece(win)
+
+    def renderBoard(self, win):
+        """
+        Draws board and pieces.
+        """
+        self.__drawBoard(win)
+        self.__drawPieces(win)
 
     # Board setup -------------------------------------------------------------
     def initialiseBoard(self) -> None:
@@ -35,10 +41,10 @@ class Board:
         """
         for row in range(PIECES_ROWS):
             for col in range(row % 2, COLS, 2):
-                self.board[row][col] = Piece(color=BLUE)
+                self.board[row][col] = Piece(color=BLUE, row=row, col=col)
         for row in range(ROWS - PIECES_ROWS, ROWS):
             for col in range(row % 2, COLS, 2):
-                self.board[row][col] = Piece(color=WHITE)
+                self.board[row][col] = Piece(color=WHITE, row=row, col=col)
 # TESTS
 if __name__ == '__main__':
     board = Board()

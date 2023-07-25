@@ -1,5 +1,5 @@
 import pygame
-from .constants import SQUARE_SIZE, GREY
+from .constants import SQUARE_SIZE, GREY, GREEN
 
 class Piece:
 
@@ -14,13 +14,30 @@ class Piece:
         self.position: tuple = (None, None)
         self.selected = False
         
-        self.computePosition()
+        self.__computePosition()
     
     def __repr__(self) -> str:
         return str(self.color)
+
+    def getCoords(self) -> tuple:
+        return (self.row, self.col)
+    
+    # Events ------------------------------------------------------------------
+    def updateSelectedStatus(self):
+        """
+        Updates selected status of the piece.
+        """
+        self.selected = not self.selected
+    
+    def move(self, newCoords):
+        """
+        Updates row and col, then recompute position.
+        """
+        self.row, self.col = newCoords[0], newCoords[1]
+        self.__computePosition()
     
     # GUI ---------------------------------------------------------------------
-    def computePosition(self) -> None:
+    def __computePosition(self) -> None:
         self.position = (
             self.row * SQUARE_SIZE + SQUARE_SIZE // 2,
             self.col * SQUARE_SIZE + SQUARE_SIZE // 2
@@ -31,5 +48,10 @@ class Piece:
         Draws piece to GUI.
         """
         pygame.draw.circle(win, GREY, self.position, self.PADDING_RADIUS)
-        pygame.draw.circle(win, self.color, self.position, self.PIECES_RADIUS)
+        if self.selected:
+            pygame.draw.circle(win, GREEN, self.position, self.PIECES_RADIUS)
+        else:
+            pygame.draw.circle(win, self.color, self.position, self.PIECES_RADIUS)
+    
+    
         

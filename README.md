@@ -1,2 +1,2 @@
-# checkers
+# Checkers
 Checkers game with AI.

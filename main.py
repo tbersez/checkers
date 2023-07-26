@@ -28,7 +28,10 @@ def main():
                 run = False
 
             if event.type == pygame.MOUSEBUTTONDOWN:
-                game.runTurn(clickToBoardCoordinates())
+                coords = clickToBoardCoordinates()
+                row, col = coords
+                print("ROW: {}, COL: {}".format(row, col))
+                game.runTurn(coords)
 
         game.update()
 

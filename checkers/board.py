@@ -51,6 +51,13 @@ class Board:
                 self.board[row][col] = Piece(color=BLUE, row=row, col=col)
     
     # Events ------------------------------------------------------------------
+    def isEmptySquare(self, coords: tuple) -> bool:
+        """
+        Checks if square is empty.
+        """
+        row, col = coords
+        return (type(self.board[row][col]) != Piece)
+
     def locatePiece(self, coords: tuple) -> Piece|None:
         """
         Returns piece if piece found at coords, else None
@@ -66,3 +73,12 @@ class Board:
         self.board[row][col], self.board[piece.row][piece.col] = self.board[piece.row][piece.col], self.board[row][col] # Updates the board
         piece.move(coords) # Updates the piece
         print("Moved piece {} to {}.".format(piece, coords))
+    
+    def squareIsWithinBounds(self, coords: tuple) -> bool:
+        """
+        Checks if square (identified by row and col index) is within the board's bounds.
+        """
+        row, col = coords
+        if (row >= 0 and row < ROWS) and (col >= 0 and col < COLS):
+            return True
+        return False

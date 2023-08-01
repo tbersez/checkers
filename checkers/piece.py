@@ -1,5 +1,5 @@
 import pygame
-from .constants import SQUARE_SIZE, GREY, CROWN
+from .constants import SQUARE_SIZE, GREY, CROWN, COLS
 
 class Piece:
 
@@ -14,13 +14,36 @@ class Piece:
         self.position: tuple = (None, None)
         self.selected = False
         
-        self.computePosition()
+        self.__computePosition()
     
     def __repr__(self) -> str:
         return str(self.color)
     
+    def __makeKing(self) -> None:
+        """
+        Makes man king.
+        """
+        self.king = True
+
+    def getCoords(self) -> tuple:
+        """
+        Returns coordinates as tuple.
+        """
+        return (self.row, self.col)
+    
+    def move(self, coords: tuple):
+        """
+        Updates piece coordinates, then compute new position.
+        """
+        row, col = coords
+        self.row = row
+        self.col = col
+        self.__computePosition()
+        if (col == COLS) or (col == 0):
+            self.__makeKing()
+    
     # GUI ---------------------------------------------------------------------
-    def computePosition(self) -> None:
+    def __computePosition(self) -> None:
         self.position = (
             self.row * SQUARE_SIZE + SQUARE_SIZE // 2,
             self.col * SQUARE_SIZE + SQUARE_SIZE // 2

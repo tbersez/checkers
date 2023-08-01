@@ -47,3 +47,21 @@ class Board:
         for col in range(ROWS - PIECES_ROWS, ROWS):
             for row in range((col + 1) % 2, COLS, 2):
                 self.board[row][col] = Piece(color=RED, row=row, col=col)
+
+    # Events ------------------------------------------------------------------
+    def getSquareContent(self, coords) -> Piece|None:
+        """
+        Return square content
+        """
+        row, col = coords
+        return self.board[row][col]
+    
+    def move(self, piece: Piece, coords):
+        """
+        Moves piece to coords.
+        """
+        pieceRow, pieceCol = piece.getCoords()
+        rowTo, colTo = coords
+        self.board[pieceRow][pieceCol], self.board[rowTo][colTo] = \
+            self.board[rowTo][colTo], self.board[pieceRow][pieceCol]
+        piece.move(coords)

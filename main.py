@@ -29,7 +29,8 @@ def main():
                 run = False
 
             if event.type == pygame.MOUSEBUTTONDOWN:
-                pass
+                coords = clickToBoardCoordinates()
+                print(coords)
         
         board.renderBoard(WIN)
         pygame.display.update()

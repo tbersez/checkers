@@ -5,9 +5,7 @@ from .piece import Piece
 class Board:
 
     def __init__(self) -> None:
-        self.board = [[None for _ in range(COLS)] for _ in range(ROWS)]
-        
-        self.__initialiseBoard()
+        self.board = [[None for _ in range(COLS)]for _ in range(ROWS)]
 
     # GUI ---------------------------------------------------------------------
     def __drawBoard(self, win) -> None:
@@ -36,49 +34,19 @@ class Board:
         self.__drawPieces(win)
 
     # Board setup -------------------------------------------------------------
-    def __initialiseBoard(self) -> None:
+    def initialiseBoard(self) -> None:
         """
         Initialise the board with both players piece.
         Empty squares hold None.
         """
-        # Player one
         for col in range(PIECES_ROWS):
             for row in range((col + 1) % 2, COLS, 2):
                 self.board[row][col] = Piece(color=WHITE, row=row, col=col)
-        # Player two
         for col in range(ROWS - PIECES_ROWS, ROWS):
             for row in range((col + 1) % 2, COLS, 2):
                 self.board[row][col] = Piece(color=BLUE, row=row, col=col)
-    
-    # Events ------------------------------------------------------------------
-    def isEmptySquare(self, coords: tuple) -> bool:
-        """
-        Checks if square is empty.
-        """
-        row, col = coords
-        return (type(self.board[row][col]) != Piece)
-
-    def locatePiece(self, coords: tuple) -> Piece|None:
-        """
-        Returns piece if piece found at coords, else None
-        """
-        row, col = coords
-        return self.board[row][col]
-    
-    def move(self, piece: Piece, coords: tuple) -> None:
-        """
-        Move pieces by updating row and col values of a piece
-        """
-        row, col = coords
-        self.board[row][col], self.board[piece.row][piece.col] = self.board[piece.row][piece.col], self.board[row][col] # Updates the board
-        piece.move(coords) # Updates the piece
-        print("Moved piece {} to {}.".format(piece, coords))
-    
-    def squareIsWithinBounds(self, coords: tuple) -> bool:
-        """
-        Checks if square (identified by row and col index) is within the board's bounds.
-        """
-        row, col = coords
-        if (row >= 0 and row < ROWS) and (col >= 0 and col < COLS):
-            return True
-        return False
+# TESTS
+if __name__ == '__main__':
+    board = Board()
+    board.initialiseBoard()
+    print(board.board)

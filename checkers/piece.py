@@ -1,5 +1,5 @@
 import pygame
-from .constants import SQUARE_SIZE, GREY
+from .constants import SQUARE_SIZE, GREY, CROWN
 
 class Piece:
 
@@ -32,4 +32,10 @@ class Piece:
         """
         pygame.draw.circle(win, GREY, self.position, self.PADDING_RADIUS)
         pygame.draw.circle(win, self.color, self.position, self.PIECES_RADIUS)
+        if self.king:
+            x, y = self.position
+            win.blit(CROWN,
+                (x - CROWN.get_width()//2, y - CROWN.get_height()//2)
+            )
+
         

@@ -1,5 +1,5 @@
 import pygame
-from .constants import COLS, ROWS, PIECES_ROWS, BLACK, RED, BLUE, WHITE, SQUARE_SIZE
+from .constants import COLS, ROWS, PIECES_ROWS, RED, GREEN, BEIGE, WHITE, SQUARE_SIZE
 from .piece import Piece
 
 class Board:
@@ -7,15 +7,17 @@ class Board:
     def __init__(self) -> None:
         self.board = [[None for _ in range(COLS)]for _ in range(ROWS)]
 
+        self.__initialiseBoard()
+
     # GUI ---------------------------------------------------------------------
     def __drawBoard(self, win) -> None:
         """
         Draws checkers board.
         """
-        win.fill(BLACK)
+        win.fill(WHITE)
         for row in range(ROWS):
             for col in range(row % 2, ROWS, 2):
-                pygame.draw.rect(win, RED, (row * SQUARE_SIZE, col * SQUARE_SIZE, SQUARE_SIZE, SQUARE_SIZE))
+                pygame.draw.rect(win, GREEN, (row * SQUARE_SIZE, col * SQUARE_SIZE, SQUARE_SIZE, SQUARE_SIZE))
     
     def __drawPieces(self, win) -> None:
         """
@@ -26,7 +28,7 @@ class Board:
                 if type(self.board[row][col]) == Piece:
                     self.board[row][col].drawPiece(win)
 
-    def renderBoard(self, win):
+    def renderBoard(self, win) -> None:
         """
         Draws board and pieces.
         """
@@ -34,19 +36,14 @@ class Board:
         self.__drawPieces(win)
 
     # Board setup -------------------------------------------------------------
-    def initialiseBoard(self) -> None:
+    def __initialiseBoard(self) -> None:
         """
-        Initialise the board with both players piece.
+        Initialise the board with both players pieces.
         Empty squares hold None.
         """
         for col in range(PIECES_ROWS):
             for row in range((col + 1) % 2, COLS, 2):
-                self.board[row][col] = Piece(color=WHITE, row=row, col=col)
+                self.board[row][col] = Piece(color=BEIGE, row=row, col=col)
         for col in range(ROWS - PIECES_ROWS, ROWS):
             for row in range((col + 1) % 2, COLS, 2):
-                self.board[row][col] = Piece(color=BLUE, row=row, col=col)
-# TESTS
-if __name__ == '__main__':
-    board = Board()
-    board.initialiseBoard()
-    print(board.board)
+                self.board[row][col] = Piece(color=RED, row=row, col=col)

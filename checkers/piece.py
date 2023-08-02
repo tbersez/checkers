@@ -6,8 +6,9 @@ class Piece:
     PIECES_RADIUS = SQUARE_SIZE // 2 * .68
     PADDING_RADIUS = SQUARE_SIZE // 2 * .75
 
-    def __init__(self, color, row, col) -> None:
+    def __init__(self, color, player, row, col) -> None:
         self.color = color
+        self.player = player
         self.king: bool = False
         self.row: int = row
         self.col: int = col
@@ -31,6 +32,12 @@ class Piece:
         """
         return (self.row, self.col)
     
+    def getOwner(self):
+        """
+        Return the piece owner.
+        """
+        return self.player
+
     def move(self, coords: tuple):
         """
         Updates piece coordinates, then compute new position.

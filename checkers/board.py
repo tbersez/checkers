@@ -1,5 +1,5 @@
 import pygame
-from .constants import COLS, ROWS, PIECES_ROWS, RED, GREEN, BEIGE, WHITE, SQUARE_SIZE
+from .constants import COLS, ROWS, PIECES_ROWS, RED, GREEN, BEIGE, WHITE, SQUARE_SIZE, PLAYER_RED, PLAYER_WHITE
 from .piece import Piece
 
 class Board:
@@ -43,10 +43,10 @@ class Board:
         """
         for col in range(PIECES_ROWS):
             for row in range((col + 1) % 2, COLS, 2):
-                self.board[row][col] = Piece(color=BEIGE, row=row, col=col)
+                self.board[row][col] = Piece(color=BEIGE, player=PLAYER_WHITE, row=row, col=col)
         for col in range(ROWS - PIECES_ROWS, ROWS):
             for row in range((col + 1) % 2, COLS, 2):
-                self.board[row][col] = Piece(color=RED, row=row, col=col)
+                self.board[row][col] = Piece(color=RED, player=PLAYER_RED, row=row, col=col)
 
     # Events ------------------------------------------------------------------
     def getSquareContent(self, coords) -> Piece|None:
@@ -65,3 +65,17 @@ class Board:
         self.board[pieceRow][pieceCol], self.board[rowTo][colTo] = \
             self.board[rowTo][colTo], self.board[pieceRow][pieceCol]
         piece.move(coords)
+
+    def countPieces(self, owner) -> int:
+        """
+        Returns the number of pieces, owned by the
+        specified owner, left on the board.
+        """
+        count = 0
+        for row in range(ROWS):
+            for col in range(COLS):
+                squareContent = self.getSquareContent((row, col))
+                if type(squareContent) == Piece:
+                    if squareContent.getOwner() == owner:
+                        count += 1
+        return count

@@ -3,6 +3,8 @@ import pygame
 # GAME
 ROWS, COLS = 8, 8
 PIECES_ROWS = 3 # How many rows of pieces each player has when the game begins
+PLAYER_RED = 0 # Player red starts
+PLAYER_WHITE = 1
 
 # GUI
 WIDTH, HEIGHT = 800, 800

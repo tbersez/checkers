@@ -1,6 +1,6 @@
 import sys
 import pygame
-from checkers.board import Board
+from checkers.game import Game
 from checkers.constants import WIDTH, HEIGHT, SQUARE_SIZE
 
 FPS = 60
@@ -19,7 +19,7 @@ def main():
     run = True
     clock = pygame.time.Clock()
 
-    board = Board()
+    game = Game(win = WIN)
 
     while run:
         clock.tick(FPS)
@@ -32,7 +32,7 @@ def main():
                 coords = clickToBoardCoordinates()
                 print(coords)
         
-        board.renderBoard(WIN)
+        game.updateGui()
         pygame.display.update()
 
     pygame.quit()

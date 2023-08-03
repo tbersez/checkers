@@ -2,6 +2,7 @@ import pygame
 from pygame.surface import Surface
 from .board import Board
 from .piece import Piece
+from .moves import MoveTree
 from .constants import PLAYER_WHITE, PLAYER_RED
 
 class Game():
@@ -56,7 +57,9 @@ class Game():
                 if squareContent.getOwner() == self.turn:
                     self.selectedPiece = squareContent
                     self.selectedPiece.updateSelectedStatus()
-                     # TODO: COMPUTE VALID MOVES
+                    tree = MoveTree(self.selectedPiece, self.board)
+                    tree.buildTree(tree.root)
+                    tree.printTree(tree.root)
                     return True
         return False
 

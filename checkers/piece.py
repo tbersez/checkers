@@ -1,5 +1,5 @@
 import pygame
-from .constants import SQUARE_SIZE, GREY, CROWN, COLS
+from .constants import SQUARE_SIZE, GREY, BLACK, CROWN, COLS
 
 class Piece:
 
@@ -18,13 +18,20 @@ class Piece:
         self.__computePosition()
     
     def __repr__(self) -> str:
-        return str(self.color)
+        return "player: {0} - coords: {1} - king: {2}".format(self.player, self.getCoords(), self.king)
     
     def __makeKing(self) -> None:
         """
         Makes man king.
         """
         self.king = True
+    
+    def updateSelectedStatus(self) -> None:
+        """
+        Updates a peice selected status.
+        The selected piece is highlighted in the GUI.
+        """
+        self.selected = not self.selected
 
     def getCoords(self) -> tuple:
         """
@@ -46,7 +53,7 @@ class Piece:
         self.row = row
         self.col = col
         self.__computePosition()
-        if (col == COLS) or (col == 0):
+        if (col == (COLS - 1)) or (col == 0):
             self.__makeKing()
     
     # GUI ---------------------------------------------------------------------
@@ -60,7 +67,10 @@ class Piece:
         """
         Draws piece to GUI.
         """
-        pygame.draw.circle(win, GREY, self.position, self.PADDING_RADIUS)
+        if self.selected:
+            pygame.draw.circle(win, BLACK, self.position, self.PADDING_RADIUS)
+        else:
+            pygame.draw.circle(win, GREY, self.position, self.PADDING_RADIUS)
         pygame.draw.circle(win, self.color, self.position, self.PIECES_RADIUS)
         if self.king:
             x, y = self.position

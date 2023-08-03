@@ -79,11 +79,3 @@ class Board:
                     if squareContent.getOwner() == owner:
                         count += 1
         return count
-    
-    def getValidMoves(self, piece: Piece) -> dict:
-        """
-        Computes all valid single moves of a given piece.
-        """
-        moves = {}
-        row, col = piece.getCoords()
-        direction = 1 if piece.getOwner() == PLAYER_WHITE else -1

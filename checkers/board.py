@@ -41,11 +41,11 @@ class Board:
         Initialise the board with both players pieces.
         Empty squares hold None.
         """
-        for col in range(PIECES_ROWS):
-            for row in range((col + 1) % 2, COLS, 2):
+        for row in range(PIECES_ROWS):
+            for col in range((row + 1) % 2, COLS, 2):
                 self.board[row][col] = Piece(color=BEIGE, player=PLAYER_WHITE, row=row, col=col)
-        for col in range(ROWS - PIECES_ROWS, ROWS):
-            for row in range((col + 1) % 2, COLS, 2):
+        for row in range(COLS - PIECES_ROWS, ROWS):
+            for col in range((row + 1) % 2, COLS, 2):
                 self.board[row][col] = Piece(color=RED, player=PLAYER_RED, row=row, col=col)
 
     # Events ------------------------------------------------------------------
@@ -79,3 +79,11 @@ class Board:
                     if squareContent.getOwner() == owner:
                         count += 1
         return count
+    
+    def getValidMoves(self, piece: Piece) -> dict:
+        """
+        Computes all valid single moves of a given piece.
+        """
+        moves = {}
+        row, col = piece.getCoords()
+        direction = 1 if piece.getOwner() == PLAYER_WHITE else -1

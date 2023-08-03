@@ -1,5 +1,5 @@
 import pygame
-from .constants import SQUARE_SIZE, GREY, BLACK, CROWN, COLS
+from .constants import SQUARE_SIZE, GREY, BLACK, CROWN, ROWS
 
 class Piece:
 
@@ -49,11 +49,9 @@ class Piece:
         """
         Updates piece coordinates, then compute new position.
         """
-        row, col = coords
-        self.row = row
-        self.col = col
+        self.row, self.col = coords
         self.__computePosition()
-        if (col == (COLS - 1)) or (col == 0):
+        if (self.row == (ROWS - 1)) or (self.row == 0):
             self.__makeKing()
     
     # GUI ---------------------------------------------------------------------

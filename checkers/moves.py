@@ -4,7 +4,7 @@ from .constants import ROWS, COLS, PLAYER_WHITE
 
 class MoveNode:
     """
-    Node class for move tree.
+    Node class for move tree. Node may have any number of children.
     """
     
     def __init__(self, coords: tuple, lastJumped: Piece|None) -> None:
@@ -26,6 +26,28 @@ class MoveNode:
         Get method for children.
         """
         return self.children
+    
+    def getLastJumped(self) -> bool:
+        """
+        Get method for last jumped piece.
+        """
+        return self.lastJumped
+
+    def hasChildren(self) -> bool:
+        """
+        Returns true if node has children, false otherwise.
+        """
+        if self.children:
+            return True
+        return False
+
+    def hasLastJumped(self) -> bool:
+        """
+        Returns true if node has last jumped, false otherwise.
+        """
+        if self.lastJumped:
+            return True
+        return False
 
 class MoveTree():
     """
@@ -44,6 +66,7 @@ class MoveTree():
             self.direction = 1
         else:
             self.direction = -1
+        self.moves: list = []
 
     def printTree(self, node: MoveNode) -> None:
         """
@@ -54,7 +77,7 @@ class MoveTree():
             self.printTree(child)
 
     # Tree --------------------------------------------------------------------
-    def buildTree(self, node: MoveNode, hasCaptured = False):
+    def __buildTree(self, node: MoveNode, hasCaptured = False):
         """
         Builds move tree for a given piece.
         """
@@ -65,19 +88,38 @@ class MoveTree():
                     move, target = capture
                     node.children[move] = MoveNode(move, lastJumped = target)
                     for child in node.getChildren().values():
-                        self.buildTree(child, hasCaptured = True)
+                        self.__buildTree(child, hasCaptured = True)
             elif hasCaptured == False:
                 moves = self.__manMove(node.getCoords())
                 for move in moves:
                     node.children[move] = MoveNode(move, lastJumped = None)
         else:
             pass
+
+    def __getValidMoves(self, node: MoveNode, jumped: list) -> None:
+        """
+        Formats valid moves from the tree as a list of tuples
+        (landing coordinates and captured pieces). The first move
+        to the list correspond to the piece starting point.
+        """
+        skiped = jumped.copy()
+        if node.hasLastJumped():
+            skiped.append(node.getLastJumped())
+            print(jumped)
+        move = (node.coords, skiped)
+        self.moves.append(move)
+        if node.hasChildren():
+            for node in node.getChildren().values():
+                self.__getValidMoves(node, skiped)
     
-    def getValidMoves(self, node: MoveNode) -> list:
+    def validMoves(self) -> list:
         """
-        Returns a list of valid moves for a piece.
         """
-        
+        self.__buildTree(self.root)
+        self.__getValidMoves(self.root, [])
+        self.moves.pop(0)
+        return self.moves
+
     # Moving rules ------------------------------------------------------------
     def __withinBounds(self, coords) -> bool:
         """
@@ -127,3 +169,15 @@ class MoveTree():
                     if target.getOwner() != self.piece.getOwner():
                         moves.append((moveDown, target))
         return moves
+    
+    def __kingMove(self, coords: tuple) -> list:
+        """
+        Returns a list of possible king moves.
+        """
+        pass
+
+    def __kingCapture(self, coords: tuple, jumped: list) -> list:
+        """
+        Returns a list of possible king captures.
+        """
+        pass

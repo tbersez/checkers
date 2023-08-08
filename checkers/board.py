@@ -1,4 +1,5 @@
 import pygame
+from pygame.surface import Surface
 from .constants import COLS, ROWS, PIECES_ROWS, RED, GREEN, BEIGE, WHITE, SQUARE_SIZE, PLAYER_RED, PLAYER_WHITE
 from .piece import Piece
 
@@ -10,7 +11,7 @@ class Board:
         self.__initialiseBoard()
 
     # GUI ---------------------------------------------------------------------
-    def __drawBoard(self, win) -> None:
+    def __drawBoard(self, win: Surface) -> None:
         """
         Draws checkers board.
         """
@@ -19,7 +20,7 @@ class Board:
             for col in range(row % 2, ROWS, 2):
                 pygame.draw.rect(win, GREEN, (row * SQUARE_SIZE, col * SQUARE_SIZE, SQUARE_SIZE, SQUARE_SIZE))
     
-    def __drawPieces(self, win) -> None:
+    def __drawPieces(self, win: Surface) -> None:
         """
         Draws pieces on the board.
         """
@@ -28,7 +29,7 @@ class Board:
                 if type(self.board[row][col]) == Piece:
                     self.board[row][col].drawPiece(win)
 
-    def renderBoard(self, win) -> None:
+    def renderBoard(self, win: Surface) -> None:
         """
         Draws board and pieces.
         """

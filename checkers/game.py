@@ -3,7 +3,7 @@ from pygame.surface import Surface
 from .board import Board
 from .piece import Piece
 from .moves import MoveTree
-from .constants import PLAYER_WHITE, PLAYER_RED
+from .constants import PLAYER_WHITE, PLAYER_RED, SQUARE_SIZE, GREY, BLUE
 
 class Game():
     """
@@ -12,6 +12,9 @@ class Game():
     checks, compute moves, checks for stoppage ...
     """
 
+    MOVE_GUIDE_RADIUS = SQUARE_SIZE // 2 * .20
+    CAPTURE_GUIDE_RADIUS = SQUARE_SIZE // 2 * .40
+
     def __init__(self, win: Surface) -> None:
         self.board: Board = Board()
         self.redPiecesCount: int = 0
@@ -19,15 +22,44 @@ class Game():
         self.win: Surface = win
         self.turn = PLAYER_RED
         self.selectedPiece: Piece|None = None
-        self.validMoves: dict = {}
+        self.validMoves: list = None
 
         self.__updatePieceCounts()
-        
+
+    def __drawMoveGuides(self, coords: tuple) -> None:
+        """
+        Draws pieces move guides.
+        """
+        row, col = coords
+        position = (
+            row * SQUARE_SIZE + SQUARE_SIZE // 2,
+            col * SQUARE_SIZE + SQUARE_SIZE // 2
+        )
+        pygame.draw.circle(self.win, GREY, position, self.MOVE_GUIDE_RADIUS)
+    
+    def __drawCaptureGuides(self, coords: tuple) -> None:
+        """
+        Draw capture guides.
+        """
+        row, col = coords
+        position = (
+            row * SQUARE_SIZE + SQUARE_SIZE // 2,
+            col * SQUARE_SIZE + SQUARE_SIZE // 2
+        )
+        pygame.draw.circle(self.win, BLUE, position, self.CAPTURE_GUIDE_RADIUS)
+
     def updateGui(self) -> None:
         """
         Updates the GUI.
         """
         self.board.renderBoard(self.win)
+        if self.validMoves:
+            for move in self.validMoves:
+                self.__drawMoveGuides(move[0])
+                if move[1]:
+                    for piece in move[1]:
+                        coords = piece.getCoords()
+                        self.__drawCaptureGuides(coords)
 
     def __updatePieceCounts(self) -> None:
         """
@@ -58,9 +90,18 @@ class Game():
                     self.selectedPiece = squareContent
                     self.selectedPiece.updateSelectedStatus()
                     tree = MoveTree(self.selectedPiece, self.board)
-                    tree.buildTree(tree.root)
-                    tree.printTree(tree.root)
+                    self.validMoves = tree.validMoves()
                     return True
+        return False
+    
+    def __isInValidMove(self, coords) -> bool:
+        """
+        Checks if piece-to-coords is a valid move.
+        Return true if it is, false otherwise.
+        """
+        for move in self.validMoves:
+            if coords == move[0]:
+                return True
         return False
 
     def __move(self, coords: tuple) -> bool:
@@ -68,8 +109,7 @@ class Game():
         Moves the selected piece to coordinates.
         Returns true upon success, false otherwise.
         """
-        squareContent = self.board.getSquareContent(coords)
-        if self.selectedPiece is not None and squareContent is None: #and coords in self.validMoves:
+        if self.selectedPiece is not None and self.__isInValidMove(coords):
             self.board.move(self.selectedPiece, coords)
             self.selectedPiece.updateSelectedStatus()
             self.__nextTurn()

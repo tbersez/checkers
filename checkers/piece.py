@@ -18,7 +18,7 @@ class Piece:
         self.__computePosition()
     
     def __repr__(self) -> str:
-        return "player: {0} - coords: {1} - king: {2}".format(self.player, self.getCoords(), self.king)
+        return "{0}".format(self.getCoords())
     
     def __makeKing(self) -> None:
         """

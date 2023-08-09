@@ -77,11 +77,11 @@ class MoveTree():
             self.printTree(child)
 
     # Tree --------------------------------------------------------------------
-    def __buildTree(self, node: MoveNode, hasCaptured = False):
+    def __buildTree(self, node: MoveNode, hasCaptured = False, jumped: list = []):
         """
         Builds move tree for a given piece.
         """
-        if not self.piece.king:
+        if not self.piece.king: # Man case
             captures = self.__manCapture(node.getCoords())
             if captures:
                 for capture in captures:
@@ -93,8 +93,21 @@ class MoveTree():
                 moves = self.__manMove(node.getCoords())
                 for move in moves:
                     node.children[move] = MoveNode(move, lastJumped = None)
-        else:
-            pass
+        else: # King case
+            captures = self.__kingCapture(node.getCoords(), jumped)
+            if captures:
+                print(captures)
+                for capture in captures:
+                    move, target = capture
+                    node.children[move] = MoveNode(move, lastJumped = target)
+                    jumped.append(target.getCoords())
+                    for child in node.getChildren().values():
+                        self.__buildTree(child, hasCaptured = True, jumped = jumped)
+            elif hasCaptured == False:
+                moves = self.__kingMove(node.getCoords())
+                for move in moves:
+                    node.children[move] = MoveNode(move, lastJumped = None)
+
 
     def __getValidMoves(self, node: MoveNode, jumped: list) -> None:
         """
@@ -148,7 +161,8 @@ class MoveTree():
 
     def __manCapture(self, coords: tuple) -> list:
         """
-        Returns a list of possible man captures.
+        Returns a list of possible man captures as
+        a list of tuples.
         """
         row, col = coords
         moves = []
@@ -174,10 +188,50 @@ class MoveTree():
         """
         Returns a list of possible king moves.
         """
-        pass
+        moves = []
+        directions = [ # Represents 4 diagonals
+            (1, 1), (-1, -1),
+            (1, -1), (-1, 1)
+        ]
+        for direction in directions:
+            row, col =  coords # Set coordinates
+            rowDir, colDir = direction # Set directions
+            while (self.__withinBounds((row, col))):
+                row += rowDir
+                col += colDir
+                moveCoords = (row, col)
+                if self.__withinBounds(moveCoords):
+                    if self.board.getSquareContent(moveCoords) is None:
+                        moves.append(moveCoords)
+                    else:
+                        break
+        return moves
 
     def __kingCapture(self, coords: tuple, jumped: list) -> list:
         """
-        Returns a list of possible king captures.
+        Returns a list of possible king captures as
+        a list of tuples.
         """
-        pass
+        moves = []
+        directions = [ # Represents 4 diagonals
+            (1, 1), (-1, -1),
+            (1, -1), (-1, 1)
+        ]
+        for direction in directions:
+            row, col =  coords # Set coordinates
+            rowDir, colDir = direction # Set directions
+            while (self.__withinBounds((row, col))):
+                row += rowDir
+                col += colDir
+                targetCoords = (row, col)
+                landingCoords = (row + rowDir, col + colDir)
+                if self.__withinBounds(targetCoords):
+                    target = self.board.getSquareContent(targetCoords)
+                    if target:
+                        if target.getCoords() not in jumped:
+                            if target.getOwner() != self.piece.getOwner():
+                                if self.__withinBounds(landingCoords):
+                                    if self.board.getSquareContent(landingCoords) is None:
+                                        moves.append((landingCoords, target))
+                                        break
+        return moves

@@ -91,6 +91,7 @@ class Game():
                     self.selectedPiece.updateSelectedStatus()
                     tree = MoveTree(self.selectedPiece, self.board)
                     self.validMoves = tree.validMoves()
+                    print(self.validMoves)
                     return True
             else:
                 self.validMoves = None
@@ -112,7 +113,6 @@ class Game():
         """
         for piece in self.validMoves[coords]:
             self.board.delete(piece.getCoords())
-
 
     def __move(self, coords: tuple) -> bool:
         """

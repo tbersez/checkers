@@ -48,7 +48,7 @@ class Board:
         for row in range(COLS - PIECES_ROWS, ROWS):
             for col in range((row + 1) % 2, COLS, 2):
                 self.board[row][col] = Piece(color=RED, player=PLAYER_RED, row=row, col=col)
-
+                
     # Events ------------------------------------------------------------------
     def getSquareContent(self, coords) -> Piece|None:
         """

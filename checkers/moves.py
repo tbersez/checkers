@@ -66,7 +66,7 @@ class MoveTree():
             self.direction = 1
         else:
             self.direction = -1
-        self.moves: list = []
+        self.moves: dict = dict()
 
     def printTree(self, node: MoveNode) -> None:
         """
@@ -106,18 +106,18 @@ class MoveTree():
         if node.hasLastJumped():
             skiped.append(node.getLastJumped())
             print(jumped)
-        move = (node.coords, skiped)
-        self.moves.append(move)
+        self.moves[node.coords] = skiped
         if node.hasChildren():
             for node in node.getChildren().values():
                 self.__getValidMoves(node, skiped)
     
-    def validMoves(self) -> list:
+    def validMoves(self) -> dict:
         """
+        Explore the move tree and returns a move dictionary.
+        Format: coords -> captures
         """
         self.__buildTree(self.root)
         self.__getValidMoves(self.root, [])
-        self.moves.pop(0)
         return self.moves
 
     # Moving rules ------------------------------------------------------------

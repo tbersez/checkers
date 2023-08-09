@@ -22,7 +22,7 @@ class Game():
         self.win: Surface = win
         self.turn = PLAYER_RED
         self.selectedPiece: Piece|None = None
-        self.validMoves: list = None
+        self.validMoves: dict = None
 
         self.__updatePieceCounts()
 
@@ -54,10 +54,10 @@ class Game():
         """
         self.board.renderBoard(self.win)
         if self.validMoves:
-            for move in self.validMoves:
-                self.__drawMoveGuides(move[0])
-                if move[1]:
-                    for piece in move[1]:
+            for move in self.validMoves.keys():
+                self.__drawMoveGuides(move)
+                if self.validMoves[move]:
+                    for piece in self.validMoves[move]:
                         coords = piece.getCoords()
                         self.__drawCaptureGuides(coords)
 
@@ -92,6 +92,8 @@ class Game():
                     tree = MoveTree(self.selectedPiece, self.board)
                     self.validMoves = tree.validMoves()
                     return True
+            else:
+                self.validMoves = None
         return False
     
     def __isInValidMove(self, coords) -> bool:
@@ -99,10 +101,18 @@ class Game():
         Checks if piece-to-coords is a valid move.
         Return true if it is, false otherwise.
         """
-        for move in self.validMoves:
-            if coords == move[0]:
+        for move in self.validMoves.keys():
+            if coords == move:
                 return True
         return False
+    
+    def __capture(self, coords: tuple) -> None:
+        """
+        Deletes captured pieces.
+        """
+        for piece in self.validMoves[coords]:
+            self.board.delete(piece.getCoords())
+
 
     def __move(self, coords: tuple) -> bool:
         """
@@ -110,6 +120,7 @@ class Game():
         Returns true upon success, false otherwise.
         """
         if self.selectedPiece is not None and self.__isInValidMove(coords):
+            self.__capture(coords)
             self.board.move(self.selectedPiece, coords)
             self.selectedPiece.updateSelectedStatus()
             self.__nextTurn()

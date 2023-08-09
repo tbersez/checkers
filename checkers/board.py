@@ -66,6 +66,13 @@ class Board:
         self.board[pieceRow][pieceCol], self.board[rowTo][colTo] = \
             self.board[rowTo][colTo], self.board[pieceRow][pieceCol]
         piece.move(coords)
+    
+    def delete(self, coords: tuple) -> None:
+        """
+        Deletes piece fron the board.
+        """
+        row, col = coords
+        self.board[row][col] = None
 
     def countPieces(self, owner) -> int:
         """

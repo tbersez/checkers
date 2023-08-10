@@ -1,4 +1,5 @@
 import pygame
+from pygame.surface import Surface
 from .constants import SQUARE_SIZE, GREY, BLACK, CROWN, ROWS
 
 class Piece:
@@ -9,7 +10,7 @@ class Piece:
     def __init__(self, color, player, row, col) -> None:
         self.color = color
         self.player = player
-        self.king: bool = True
+        self.king: bool = False
         self.row: int = row
         self.col: int = col
         self.position: tuple = (None, None)
@@ -61,7 +62,7 @@ class Piece:
             self.col * SQUARE_SIZE + SQUARE_SIZE // 2
         )
     
-    def drawPiece(self, win) -> None:
+    def drawPiece(self, win: Surface) -> None:
         """
         Draws piece to GUI.
         """

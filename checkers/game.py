@@ -1,9 +1,10 @@
 import pygame
 from pygame.surface import Surface
+from pygame.font import Font
 from .board import Board
 from .piece import Piece
 from .moves import MoveTree
-from .constants import PLAYER_WHITE, PLAYER_RED, SQUARE_SIZE, GREY, BLUE
+from .constants import PLAYER_WHITE, PLAYER_RED, SQUARE_SIZE, GREY, BLUE, BLACK, WHITE, HEIGHT, WIDTH
 
 class Game():
     """
@@ -14,6 +15,9 @@ class Game():
 
     MOVE_GUIDE_RADIUS = SQUARE_SIZE // 2 * .20
     CAPTURE_GUIDE_RADIUS = SQUARE_SIZE // 2 * .40
+    END_GAME_MENU_HEIGHT = 400
+    END_GAME_MENU_WIDTH = 250
+    FONT = pygame.font.SysFont("tlwgtypo", 30)
 
     def __init__(self, win: Surface) -> None:
         self.board: Board = Board()
@@ -23,8 +27,41 @@ class Game():
         self.turn = PLAYER_RED
         self.selectedPiece: Piece|None = None
         self.validMoves: dict = None
+        self.endGame: bool = False
 
         self.__updatePieceCounts()
+
+    # GUI ---------------------------------------------------------------------
+    def __drawText(self, text: str, font: Font, color: tuple, coords: tuple) -> None:
+        """
+        Draws text to window.
+        """
+        textImg = font.render(text, True, color)
+        self.win.blit(textImg, coords)
+    
+    def __drawEndGameMenu(self) -> None:
+        """
+        Draws endgame menu.
+        """
+        coords = (
+            (HEIGHT - self.END_GAME_MENU_HEIGHT) // 2,
+            (WIDTH - self.END_GAME_MENU_WIDTH) // 2,
+            self.END_GAME_MENU_HEIGHT,
+            self.END_GAME_MENU_WIDTH
+        )
+        # Draws menu box
+        pygame.draw.rect(self.win, BLACK, tuple(x + 5 for x in coords)) # Menu shade
+        pygame.draw.rect(self.win, GREY, coords)
+        # Add message
+        message = "The {} player won!".format("red" if self.turn == PLAYER_RED else "white")
+        textImg = self.FONT.render(message, True, WHITE)
+        coords = (
+            (HEIGHT - textImg.get_width()) // 2,
+            (WIDTH - textImg.get_height()) // 2 - (self.END_GAME_MENU_WIDTH // 3),
+            self.END_GAME_MENU_HEIGHT,
+            self.END_GAME_MENU_WIDTH
+        )
+        self.win.blit(textImg, coords)
 
     def __drawMoveGuides(self, coords: tuple) -> None:
         """
@@ -60,7 +97,10 @@ class Game():
                     for piece in self.validMoves[move]:
                         coords = piece.getCoords()
                         self.__drawCaptureGuides(coords)
+        if self.endGame:
+            self.__drawEndGameMenu()
 
+    # EVENTS ------------------------------------------------------------------
     def __updatePieceCounts(self) -> None:
         """
         Updates piece counts for both players.
@@ -130,10 +170,20 @@ class Game():
         """
         Moves on to next turn.
         """
+        self.selectedPiece = None
+        self.validMoves = None
         self.__updatePieceCounts()
-        if self.turn == PLAYER_RED:
+        if self.redPiecesCount == 0 or self.whitePiecesCount == 0:
+            self.__endGame()
+        elif self.turn == PLAYER_RED:
             self.turn = PLAYER_WHITE
         else:
             self.turn = PLAYER_RED
+    
+    def __endGame(self) -> None:
+        """
+        Ends the game.
+        """
         self.selectedPiece = None
         self.validMoves = None
+        self.endGame = True

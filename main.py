@@ -1,5 +1,5 @@
 import sys
-import pygame
+import pygame; pygame.init()
 from checkers.game import Game
 from checkers.constants import WIDTH, HEIGHT, SQUARE_SIZE
 

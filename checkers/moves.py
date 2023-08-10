@@ -89,7 +89,7 @@ class MoveTree():
                     move, target = capture
                     node.children[move] = MoveNode(move, lastJumped = target)
                     for child in node.getChildren().values():
-                        self.__buildTree(child, hasCaptured = True)
+                        self.__buildTree(child, hasCaptured = True, jumped = jumped)
             elif hasCaptured == False:
                 moves = self.__manMove(node.getCoords())
                 for move in moves:

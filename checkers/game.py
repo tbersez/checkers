@@ -91,7 +91,6 @@ class Game():
                     self.selectedPiece.updateSelectedStatus()
                     tree = MoveTree(self.selectedPiece, self.board)
                     self.validMoves = tree.validMoves()
-                    print(self.validMoves)
                     return True
             else:
                 self.validMoves = None

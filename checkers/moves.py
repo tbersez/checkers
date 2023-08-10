@@ -77,10 +77,11 @@ class MoveTree():
             self.printTree(child)
 
     # Tree --------------------------------------------------------------------
-    def __buildTree(self, node: MoveNode, hasCaptured = False, jumped: list = []):
+    def __buildTree(self, node: MoveNode, jumped: list, hasCaptured: bool = False):
         """
         Builds move tree for a given piece.
         """
+        print("Jumped: {}".format(jumped))
         if not self.piece.king: # Man case
             captures = self.__manCapture(node.getCoords())
             if captures:
@@ -96,7 +97,7 @@ class MoveTree():
         else: # King case
             captures = self.__kingCapture(node.getCoords(), jumped)
             if captures:
-                print(captures)
+                print("Captures: {}".format(captures))
                 for capture in captures:
                     move, target = capture
                     node.children[move] = MoveNode(move, lastJumped = target)
@@ -129,8 +130,9 @@ class MoveTree():
         Explore the move tree and returns a move dictionary.
         Format: coords -> captures
         """
-        self.__buildTree(self.root)
+        self.__buildTree(self.root, [])
         self.__getValidMoves(self.root, [])
+        self.moves.pop(self.root.getCoords())
         return self.moves
 
     # Moving rules ------------------------------------------------------------
@@ -234,4 +236,6 @@ class MoveTree():
                                     if self.board.getSquareContent(landingCoords) is None:
                                         moves.append((landingCoords, target))
                                         break
+                            elif target.getOwner() == self.piece.getOwner():
+                                break
         return moves

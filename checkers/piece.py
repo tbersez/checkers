@@ -9,7 +9,7 @@ class Piece:
     def __init__(self, color, player, row, col) -> None:
         self.color = color
         self.player = player
-        self.king: bool = False
+        self.king: bool = True
         self.row: int = row
         self.col: int = col
         self.position: tuple = (None, None)

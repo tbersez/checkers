@@ -31,7 +31,7 @@ def main():
             if event.type == pygame.MOUSEBUTTONDOWN:
                 coords = clickToBoardCoordinates()
                 print(coords)
-                game.select(coords)
+                game.runGame(coords)
         
         game.updateGui()
         pygame.display.update()

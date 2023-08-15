@@ -27,6 +27,7 @@ class Game():
         self.turn = PLAYER_RED
         self.selectedPiece: Piece|None = None
         self.validMoves: dict = None
+        self.startGame: bool = False
         self.endGame: bool = False
 
         self.__updatePieceCounts()
@@ -101,6 +102,19 @@ class Game():
             self.__drawEndGameMenu()
 
     # EVENTS ------------------------------------------------------------------
+    def runGame(self, coords: tuple) -> None:
+        """
+        Runs the game based on click events
+        """
+        if self.startGame:
+            #TODO: handle click event of the startup menu
+            pass
+        elif self.endGame:
+            #TODO: handle click event of the endgame menu
+            pass
+        else:
+            self.__select(coords)
+
     def __updatePieceCounts(self) -> None:
         """
         Updates piece counts for both players.
@@ -108,7 +122,7 @@ class Game():
         self.redPiecesCount = self.board.countPieces(PLAYER_RED)
         self.whitePiecesCount = self.board.countPieces(PLAYER_WHITE)
     
-    def select(self, coords: tuple) -> bool:
+    def __select(self, coords: tuple) -> bool:
         """
         Selects piece on the board from coordinates. If the
         coordinates hold no piece, or an opponent's piece,
@@ -120,7 +134,7 @@ class Game():
             if not move:
                 self.selectedPiece.updateSelectedStatus()
                 self.selectedPiece = None
-                self.select(coords)
+                self.__select(coords)
         else:
             if self.selectedPiece:
                 self.selectedPiece.updateSelectedStatus()

@@ -236,6 +236,8 @@ class MoveTree():
                                     if self.board.getSquareContent(landingCoords) is None:
                                         moves.append((landingCoords, target))
                                         break
+                                    else:
+                                        break
                             elif target.getOwner() == self.piece.getOwner():
                                 break
         return moves
